@@ -1,0 +1,19 @@
+{
+    "app": "npx ts-node src/infra/Launcher.ts",
+    "context": {
+      "environments": {
+        "DEV": {
+          "account": "094106269614",
+          "primaryRegion": "us-east-1"
+        },
+        "UAT": {
+          "account": "094106269614",
+          "primaryRegion": "us-east-1"
+        },
+        "PROD": {
+          "account": "094106269614",
+          "primaryRegion": "us-east-1"
+        }
+      }
+    }
+  }

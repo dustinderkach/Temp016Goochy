@@ -1,0 +1,106 @@
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import { Construct } from "constructs";
+import { IBucket } from "aws-cdk-lib/aws-s3";
+
+interface AppTableReplicaAttributes {
+	tableName: string;
+	tableArn: string;
+	region: string;
+}
+
+
+
+interface Temp016GoochyDataStackProps extends StackProps {
+	allRegions: string[];
+	envName: string;
+}
+
+export class Temp016GoochyDataStack extends Stack {
+	public readonly primaryAppTable: dynamodb.TableV2;
+	public readonly primaryConfigTable: dynamodb.TableV2;
+	public readonly deploymentBucket: IBucket;
+	public readonly photosBucket: IBucket;
+	public readonly AppTables: AppTableReplicaAttributes[] = [];
+
+	constructor(
+		scope: Construct,
+		id: string,
+		props: Temp016GoochyDataStackProps
+	) {
+		super(scope, id, props);
+
+		const primaryRegion = props.env?.region;
+		const AppTableName = `${props.envName}-Temp016GoochyTable`;
+
+		const replicaRegions: dynamodb.ReplicaTableProps[] = props.allRegions
+			.filter((region) => region !== primaryRegion)
+			.map((region) => ({ region, contributorInsights: false }));
+
+		// Create the primary table and replicas
+		this.primaryAppTable = this.createAppPrimaryAndReplicaTables(
+			AppTableName,
+			props.envName,
+			props.allRegions,
+			replicaRegions
+		);
+
+
+	}
+
+	// Method to get the replica table for a specific region
+	public getAppTableByRegion(
+		region: string
+	): AppTableReplicaAttributes | undefined {
+		return this.AppTables.find(
+			(replica) => replica.region === region
+		) as AppTableReplicaAttributes;
+	}
+
+
+	private createAppPrimaryAndReplicaTables(
+		tableName: string,
+		envName: string,
+		allRegions: string[],
+		replicaRegions: dynamodb.ReplicaTableProps[]
+	): dynamodb.TableV2 {
+		// Create the primary DynamoDB table with replicas
+		const primaryTable = new dynamodb.TableV2(this, tableName, {
+			partitionKey: {
+				name: "id",
+				type: dynamodb.AttributeType.STRING,
+			},
+			billing: dynamodb.Billing.onDemand(),
+			contributorInsights: true,
+			pointInTimeRecovery: true,
+			tableClass: dynamodb.TableClass.STANDARD,
+			removalPolicy: RemovalPolicy.DESTROY,
+			tableName: tableName,
+			replicas: replicaRegions,
+		});
+
+		// Add replicas to the replicaAppTables array and create outputs
+		allRegions.forEach((region) => {
+			const arn = `arn:aws:dynamodb:${region}:${this.account}:table/${tableName}`;
+			this.AppTables.push({
+				tableName: tableName,
+				tableArn: arn,
+				region: region,
+			});
+
+			// Create CfnOutput for each replica table
+			new CfnOutput(this, `${tableName}-${region}`, {
+				value: tableName,
+				description: `Table name in ${region}`,
+			});
+
+			new CfnOutput(this, `${envName}-Temp016GoochyTableArn-${region}`, {
+				value: arn,
+				description: `Table ARN in ${region}`,
+			});
+		});
+
+		return primaryTable;
+	}
+
+}

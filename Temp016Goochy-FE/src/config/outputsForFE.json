@@ -1,0 +1,12 @@
+{
+  "AdminPhotosBucketName": "dev-temp016goochy-admin-photos-0e83d2bfb0cb",
+  "EnvironmentName": "DEV",
+  "IdentityPoolId": "us-east-1:1477468d-b271-45da-b799-ca7c34bf6a44",
+  "UserPoolId": "us-east-1_Uj99dl7dA",
+  "UserPoolClientId": "2pf6i134gdjvls0pki5499si4s",
+  "PrimaryRegionName": "us-east-1",
+  "ApiEndpoint-PrimaryRegion": "https://drqmvap1h7.execute-api.us-east-1.amazonaws.com/prod/DEV-temp016Goochy",
+  "ApiEndpoint-PrimaryRegion-PreSignPhotoAdmin": "https://drqmvap1h7.execute-api.us-east-1.amazonaws.com/prod/DEV-get-presigned-url",
+  "ApiEndpoint-LastReplicaRegion": "https://10unvdvnz2.execute-api.eu-central-1.amazonaws.com/prod/DEV-temp016Goochy",
+  "ApiEndpoint-LastReplicaRegion-PreSignPhotoAdmin": "https://10unvdvnz2.execute-api.eu-central-1.amazonaws.com/prod/DEV-get-presigned-url"
+}

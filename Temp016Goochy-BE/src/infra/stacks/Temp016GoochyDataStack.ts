@@ -2,6 +2,7 @@ import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import { IBucket } from "aws-cdk-lib/aws-s3";
+import { APP_NAME } from "../../config/appConfig";
 
 interface AppTableReplicaAttributes {
 	tableName: string;
@@ -11,12 +12,12 @@ interface AppTableReplicaAttributes {
 
 
 
-interface Temp016GoochyDataStackProps extends StackProps {
+interface AppDataStackProps extends StackProps {
 	allRegions: string[];
 	envName: string;
 }
 
-export class Temp016GoochyDataStack extends Stack {
+export class AppDataStack extends Stack {
 	public readonly primaryAppTable: dynamodb.TableV2;
 	public readonly primaryConfigTable: dynamodb.TableV2;
 	public readonly deploymentBucket: IBucket;
@@ -26,12 +27,12 @@ export class Temp016GoochyDataStack extends Stack {
 	constructor(
 		scope: Construct,
 		id: string,
-		props: Temp016GoochyDataStackProps
+		props: AppDataStackProps
 	) {
 		super(scope, id, props);
 
 		const primaryRegion = props.env?.region;
-		const AppTableName = `${props.envName}-Temp016GoochyTable`;
+		const AppTableName = `${props.envName}-${APP_NAME}Table`;
 
 		const replicaRegions: dynamodb.ReplicaTableProps[] = props.allRegions
 			.filter((region) => region !== primaryRegion)
@@ -92,11 +93,13 @@ export class Temp016GoochyDataStack extends Stack {
 			new CfnOutput(this, `${tableName}-${region}`, {
 				value: tableName,
 				description: `Table name in ${region}`,
+				exportName: `${envName}-${APP_NAME}TableName-${region}`,
 			});
 
-			new CfnOutput(this, `${envName}-Temp016GoochyTableArn-${region}`, {
+			new CfnOutput(this, `${envName}-${APP_NAME}TableArn-${region}`, {
 				value: arn,
 				description: `Table ARN in ${region}`,
+				exportName: `${envName}-${APP_NAME}TableArn-${region}`,
 			});
 		});
 

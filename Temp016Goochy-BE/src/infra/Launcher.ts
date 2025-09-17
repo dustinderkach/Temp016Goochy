@@ -1,12 +1,13 @@
 import { App } from "aws-cdk-lib";
-import { Temp016GoochyApiStack } from "./stacks/Temp016GoochyApiStack";
-import { Temp016GoochyDataStack } from "./stacks/Temp016GoochyDataStack";
-import { Temp016GoochyLambdaStack } from "./stacks/Temp016GoochyLambdaStack";
-import { Temp016GoochyAuthStack } from "./stacks/Temp016GoochyAuthStack";
-import { Temp016GoochyUiDeploymentStack } from "./stacks/Temp016GoochyUiDeploymentStack";
+import { AppApiStack } from "./stacks/Temp016GoochyApiStack";
+import { AppDataStack } from "./stacks/Temp016GoochyDataStack";
+import { AppLambdaStack } from "./stacks/Temp016GoochyLambdaStack";
+import { AppAuthStack } from "./stacks/Temp016GoochyAuthStack";
+import { AppUiDeploymentStack } from "./stacks/Temp016GoochyUiDeploymentStack";
 import { Temp016GoochyMonitorStack } from "./stacks/Temp016GoochyMonitorStack";
-import { Temp016GoochyS3Stack } from "./stacks/Temp016GoochyS3Stack";
+import { AppS3Stack } from "./stacks/Temp016GoochyS3Stack";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { APP_NAME } from "../config/appConfig";
 
 const app = new App();
 
@@ -30,20 +31,18 @@ console.log(
 // e.g., cdk bootstrap aws://094106269614/eu-central-1
 const allRegions = [env.primaryRegion, "eu-central-1"];
 
-// Create a global S3 stack, in one region as it's CDN and global.
-const s3Stack = new Temp016GoochyS3Stack(
-	app,
-	`${envName}-Temp016GoochyS3Stack`,
-	{
-		env: { account: env.account, region: env.primaryRegion },
-		envName: envName,
-	}
-);
+	const s3Stack = new AppS3Stack(
+		app,
+		`${envName}-${APP_NAME}S3Stack`,
+		{
+			envName: envName,
+		}
+	);
 
 // Deploy Auth stack only in a single region (global authentication).
-const authStack = new Temp016GoochyAuthStack(
+const authStack = new AppAuthStack(
 	app,
-	`${envName}-Temp016GoochyAuthStack`,
+	`${envName}-${APP_NAME}AuthStack`,
 	{
 		env: { account: env.account, region: env.primaryRegion },
 		photosBucket: s3Stack.photosBucket,
@@ -54,9 +53,9 @@ const authStack = new Temp016GoochyAuthStack(
 //  For Deploy/Destroy purposes add dependency: Auth stack depends on S3 stack
 authStack.addDependency(s3Stack);
 
-const dataStack = new Temp016GoochyDataStack(
+const dataStack = new AppDataStack(
 	app,
-	`${envName}-Temp016GoochyDataStack`,
+	`${envName}-${APP_NAME}DataStack`,
 	{
 		env: { account: env.account, region: env.primaryRegion },
 		allRegions: allRegions,
@@ -82,9 +81,9 @@ allRegions.forEach((region) => {
 			`The table name for this region: ${regionName}, tableName:   ${appReplicaTable.tableName}`
 		);
 
-		let lambdaStack = new Temp016GoochyLambdaStack(
+		let lambdaStack = new AppLambdaStack(
 			app,
-			`${envName}-Temp016GoochyLambdaStack-${regionName}`,
+			`${envName}-${APP_NAME}LambdaStack-${regionName}`,
 			{
 				env: { account: env.account, region },
 				tableArn: appReplicaTable.tableArn,
@@ -99,14 +98,14 @@ allRegions.forEach((region) => {
 		// For Deploy/Destroy purposes add dependency: Lambda stack depends on Data stack
 		lambdaStack.addDependency(dataStack);
 
-		let apiStack = new Temp016GoochyApiStack(
+		let apiStack = new AppApiStack(
 			app,
-			`${envName}-Temp016GoochyApiStack${regionName}`,
+			`${envName}-${APP_NAME}ApiStack${regionName}`,
 			{
 				env: { account: env.account, region },
 				crossRegionReferences: true,
-				temp016GoochyLambdaIntegration:
-					lambdaStack.temp016GoochyLambdaIntegration,
+				appLambdaIntegration:
+					lambdaStack.appLambdaIntegration,
 				userPool: authStack.userPool, // Use global user pool
 				envName: envName,
 			}
@@ -119,22 +118,20 @@ allRegions.forEach((region) => {
 	}
 });
 
-// (Optional) Deploy the UI & monitor stacks in one region
-const uiDeploymentStack = new Temp016GoochyUiDeploymentStack(
-	app,
-	`${envName}-Temp016GoochyUiDeploymentStack`,
-	{
-		env: { account: env.account, region: env.primaryRegion },
-		envName: envName,
-	}
-);
+	const uiDeploymentStack = new AppUiDeploymentStack(
+		app,
+		`${envName}-${APP_NAME}UiDeploymentStack`,
+		{
+			envName: envName,
+		}
+	);
 
 //  For Deploy/Destroy purposes add dependency: UI Deployment stack depends on Auth stack
 uiDeploymentStack.addDependency(authStack);
 
 const monitorStack = new Temp016GoochyMonitorStack(
 	app,
-	`${envName}-Temp016GoochyMonitorStack`,
+	`${envName}-${APP_NAME}MonitorStack`,
 	{
 		env: { account: env.account, region: env.primaryRegion },
 	}

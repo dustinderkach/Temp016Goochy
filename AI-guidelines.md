@@ -1,4 +1,4 @@
-# Qodo Coding Guidelines
+# Coding Guidelines
 
 ## Purpose
 
@@ -6,7 +6,7 @@ These are the best practices and constraints Qodo should follow when generating 
 
 ## Response
 
--   Do not modifiy code or content or ask to implement chages, but make it easy for me to find and update the code myself so I can learn why and be aware of what is happening in the code base.
+-   Do not modifiy code or content or implement chages without asking if you can. If I say yes than you can. Otherwise on no, do Not modify but make it easy for me to find and update the code myself so I can learn why and be aware of what is happening in the code base. Unless I say you can act like an agent this time.
 -   Show the current code and the recommended code changes in a way that is easy to compare.
 -   Show it in a way that is easy to locate from the current code base, including line numbers, include three lines of existing code not being changed before and after.
 -   Show what exactly needs to be changed (all characters)

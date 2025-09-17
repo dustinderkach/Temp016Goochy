@@ -5,8 +5,9 @@ import { Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 import { join } from "path";
+import { APP_NAME } from "../../config/appConfig";
 
-interface Temp016GoochyLambdaStackProps extends StackProps {
+interface AppLambdaStackProps extends StackProps {
 	tableArn: string;
 	tableName: string;
 	envName: string;
@@ -14,22 +15,22 @@ interface Temp016GoochyLambdaStackProps extends StackProps {
 	bucketArn: string;
 }
 
-export class Temp016GoochyLambdaStack extends Stack {
-	public readonly temp016GoochyLambdaIntegration: LambdaIntegration;
+export class AppLambdaStack extends Stack {
+	public readonly appLambdaIntegration: LambdaIntegration;
 
 	constructor(
 		scope: Construct,
 		id: string,
-		props: Temp016GoochyLambdaStackProps
+		props: AppLambdaStackProps
 	) {
 		super(scope, id, props);
 		//Note, AWS_REGION is avaiable in the Lambda runtime environment, so no need to pass it as an environment variable  Otherwise it will fail
 		const temp016GoochyLambda = new NodejsFunction(
 			this,
-			`${props.envName}-Temp016GoochyLambda`,
+			`${props.envName}-${APP_NAME}Lambda`,
 			{
 				runtime: Runtime.NODEJS_18_X,
-				handler: "handlerTemp016Goochy",
+				handler: "handlerApp",
 				entry: join(
 					__dirname,
 					"..",
@@ -77,7 +78,7 @@ export class Temp016GoochyLambdaStack extends Stack {
 			})
 		);
 
-		this.temp016GoochyLambdaIntegration = new LambdaIntegration(
+		this.appLambdaIntegration = new LambdaIntegration(
 			temp016GoochyLambda
 		);
 

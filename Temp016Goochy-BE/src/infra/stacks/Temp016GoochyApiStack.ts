@@ -17,23 +17,24 @@ import {
 import { IUserPool } from "aws-cdk-lib/aws-cognito";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
+import { APP_NAME, APP_NAME_LOWER } from "../../config/appConfig";
 
-interface Temp016GoochyApiStackProps extends StackProps {
-	temp016GoochyLambdaIntegration: LambdaIntegration;
+interface AppApiStackProps extends StackProps {
+	appLambdaIntegration: LambdaIntegration;
 	userPool: IUserPool;
 	env: { account: string; region: string };
 	envName: string;
 }
 
-export class Temp016GoochyApiStack extends Stack {
+export class AppApiStack extends Stack {
 	constructor(
 		scope: Construct,
 		id: string,
-		props: Temp016GoochyApiStackProps
+		props: AppApiStackProps
 	) {
 		super(scope, id, props);
 
-		const api = new RestApi(this, `${props.envName}-Temp016GoochyApi`, {
+		const api = new RestApi(this, `${props.envName}-${APP_NAME}Api`, {
 			deployOptions: {
 				accessLogDestination: new LogGroupLogDestination(
 					new LogGroup(this, `${props.envName}-ApiAccessLogs`)
@@ -45,7 +46,7 @@ export class Temp016GoochyApiStack extends Stack {
 
 		const authorizer = new CognitoUserPoolsAuthorizer(
 			this,
-			`${props.envName}-Temp016GoochyApiAuthorizer`,
+			`${props.envName}-${APP_NAME}ApiAuthorizer`,
 			{
 				cognitoUserPools: [props.userPool],
 				identitySource: "method.request.header.Authorization",
@@ -93,11 +94,11 @@ export class Temp016GoochyApiStack extends Stack {
 
 		// Presigned URL resource
 		const presignedUrlResource = api.root.addResource(
-			`${props.envName}-get-presigned-url`
+			`${props.envName}-${APP_NAME_LOWER}-get-presigned-url`
 		);
 		presignedUrlResource.addMethod(
 			"POST",
-			props.temp016GoochyLambdaIntegration,
+			props.appLambdaIntegration,
 			optionsWithAuth
 		);
 		presignedUrlResource.addMethod(
@@ -141,26 +142,26 @@ export class Temp016GoochyApiStack extends Stack {
 
 		// Main resource
 		const temp016GoochyResource = api.root.addResource(
-			`${props.envName}-temp016Goochy`
+			`${props.envName}-${APP_NAME_LOWER}`
 		);
 		temp016GoochyResource.addMethod(
 			"GET",
-			props.temp016GoochyLambdaIntegration,
+			props.appLambdaIntegration,
 			optionsWithAuth
 		);
 		temp016GoochyResource.addMethod(
 			"POST",
-			props.temp016GoochyLambdaIntegration,
+			props.appLambdaIntegration,
 			optionsWithAuth
 		);
 		temp016GoochyResource.addMethod(
 			"PUT",
-			props.temp016GoochyLambdaIntegration,
+			props.appLambdaIntegration,
 			optionsWithAuth
 		);
 		temp016GoochyResource.addMethod(
 			"DELETE",
-			props.temp016GoochyLambdaIntegration,
+			props.appLambdaIntegration,
 			optionsWithAuth
 		);
 		temp016GoochyResource.addMethod(
@@ -202,27 +203,27 @@ export class Temp016GoochyApiStack extends Stack {
 			}
 		);
 
-		const apiEndpointApp = `${api.url}${props.envName}-temp016Goochy`;
-		const apiEndpointPreSign = `${api.url}${props.envName}-get-presigned-url`;
+		const apiEndpointApp = `${api.url}${props.envName}-${APP_NAME_LOWER}`;
+		const apiEndpointPreSign = `${api.url}${props.envName}-${APP_NAME_LOWER}-get-presigned-url`;
 		console.log("API-Endpoint thing: " + apiEndpointApp);
 		console.log(
 			"Pre-signed resource path:",
-			`${props.envName}-get-presigned-url`
+			`${props.envName}-${APP_NAME_LOWER}-get-presigned-url`
 		);
 		console.log("Exported pre-signed endpoint:", apiEndpointPreSign);
 
-		new CfnOutput(this, `${props.envName}-Temp016GoochyApiEndpoint`, {
+		new CfnOutput(this, `${props.envName}-${APP_NAME}ApiEndpoint`, {
 			value: apiEndpointApp,
-			description: "The endpoint of the Temp016Goochy API",
-			exportName: `${props.envName}-Temp016GoochyApiEndpoint`,
+			description: `The endpoint of the ${APP_NAME} API`,
+			exportName: `${props.envName}-${APP_NAME}ApiEndpoint`,
 		});
 		new CfnOutput(
 			this,
-			`${props.envName}-Temp016GoochyApiEndpointPreSignAdminPhoto`,
+			`${props.envName}-${APP_NAME}ApiEndpointPreSignAdminPhoto`,
 			{
 				value: apiEndpointPreSign,
-				description: "The endpoint of the Temp016Goochy API",
-				exportName: `${props.envName}-Temp016GoochyApiEndpointPreSignAdminPhoto`,
+				description: `The endpoint of the ${APP_NAME} API`,
+				exportName: `${props.envName}-${APP_NAME}ApiEndpointPreSignAdminPhoto`,
 			}
 		);
 	}

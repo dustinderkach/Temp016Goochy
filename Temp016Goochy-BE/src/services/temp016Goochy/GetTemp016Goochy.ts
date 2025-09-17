@@ -5,19 +5,20 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { APP_NAME } from "../../config/appConfig";
 
-export async function getTemp016Goochy(
+export async function getAppEntry(
 	event: APIGatewayProxyEvent,
 	ddbClient: DynamoDBClient
 ): Promise<APIGatewayProxyResult> {
 	if (event.queryStringParameters) {
 		if ("id" in event.queryStringParameters) {
-			const temp016GoochyId = event.queryStringParameters["id"];
+			const entryId = event.queryStringParameters["id"];
 			const getItemResponse = await ddbClient.send(
 				new GetItemCommand({
 					TableName: process.env.TABLE_NAME,
 					Key: {
-						id: { S: temp016GoochyId },
+						id: { S: entryId },
 					},
 				})
 			);
@@ -31,7 +32,7 @@ export async function getTemp016Goochy(
 				return {
 					statusCode: 404,
 					body: JSON.stringify(
-						`Temp016Goochy with id ${temp016GoochyId} not found!`
+						`${APP_NAME} entry with id ${entryId} not found!`
 					),
 				};
 			}

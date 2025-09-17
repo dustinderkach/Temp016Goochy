@@ -19,14 +19,15 @@ import {
 	ObjectOwnership,
 } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
+import { APP_NAME } from "../../config/appConfig";
 
-interface Temp016GoochyAuthStackProps extends StackProps {
+interface AppAuthStackProps extends StackProps {
 	envName: string;
 	photosBucket: IBucket;
 	env: { account: string; region: string };
 }
 
-export class Temp016GoochyAuthStack extends Stack {
+export class AppAuthStack extends Stack {
 	public userPool: UserPool;
 	private props: Temp016GoochyAuthStackProps;
 	private userPoolClient: UserPoolClient;
@@ -38,7 +39,7 @@ export class Temp016GoochyAuthStack extends Stack {
 	constructor(
 		scope: Construct,
 		id: string,
-		props: Temp016GoochyAuthStackProps
+		props: AppAuthStackProps
 	) {
 		super(scope, id, props);
 		this.props = props;
@@ -70,7 +71,7 @@ export class Temp016GoochyAuthStack extends Stack {
 	private createUserPool() {
 		this.userPool = new UserPool(
 			this,
-			`${this.props.envName}-Temp016GoochyUserPool`,
+			`${this.props.envName}-${APP_NAME}UserPool`,
 			{
 				selfSignUpEnabled: true,
 				signInAliases: {
@@ -80,14 +81,15 @@ export class Temp016GoochyAuthStack extends Stack {
 			}
 		);
 
-		new CfnOutput(this, `${this.props.envName}-Temp016GoochyUserPoolId`, {
+		new CfnOutput(this, `${this.props.envName}-${APP_NAME}UserPoolId`, {
 			value: this.userPool.userPoolId,
+			exportName: `${this.props.envName}-${APP_NAME}UserPoolId`,
 		});
 	}
 
 	private createUserPoolClient() {
 		this.userPoolClient = this.userPool.addClient(
-			`${this.props.envName}-Temp016GoochyUserPoolClient`,
+			`${this.props.envName}-${APP_NAME}UserPoolClient`,
 			{
 				authFlows: {
 					adminUserPassword: true,
@@ -99,9 +101,10 @@ export class Temp016GoochyAuthStack extends Stack {
 		);
 		new CfnOutput(
 			this,
-			`${this.props.envName}-Temp016GoochyUserPoolClientId`,
+			`${this.props.envName}-${APP_NAME}UserPoolClientId`,
 			{
 				value: this.userPoolClient.userPoolClientId,
+				exportName: `${this.props.envName}-${APP_NAME}UserPoolClientId`,
 			}
 		);
 	}
@@ -109,7 +112,7 @@ export class Temp016GoochyAuthStack extends Stack {
 	private createAdminsGroup() {
 		new CfnUserPoolGroup(
 			this,
-			`${this.props.envName}-Temp016GoochyAdmins`,
+			`${this.props.envName}-${APP_NAME}Admins`,
 			{
 				userPoolId: this.userPool.userPoolId,
 				groupName: "admins",
@@ -121,7 +124,7 @@ export class Temp016GoochyAuthStack extends Stack {
 	private createIdentityPool() {
 		this.identityPool = new CfnIdentityPool(
 			this,
-			`${this.props.envName}-Temp016GoochyIdentityPool`,
+			`${this.props.envName}-${APP_NAME}IdentityPool`,
 			{
 				allowUnauthenticatedIdentities: true,
 				cognitoIdentityProviders: [
@@ -134,9 +137,10 @@ export class Temp016GoochyAuthStack extends Stack {
 		);
 		new CfnOutput(
 			this,
-			`${this.props.envName}-Temp016GoochyIdentityPoolId`,
+			`${this.props.envName}-${APP_NAME}IdentityPoolId`,
 			{
 				value: this.identityPool.ref,
+				exportName: `${this.props.envName}-${APP_NAME}IdentityPoolId`,
 			}
 		);
 	}
@@ -226,7 +230,7 @@ export class Temp016GoochyAuthStack extends Stack {
 	private attachRoles() {
 		new CfnIdentityPoolRoleAttachment(
 			this,
-			`${this.props.envName}-RolesAttachment`,
+			`${this.props.envName}-${APP_NAME}RolesAttachment`,
 			{
 				identityPoolId: this.identityPool.ref,
 				roles: {

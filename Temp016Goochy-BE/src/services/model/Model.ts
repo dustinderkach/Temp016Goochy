@@ -1,4 +1,4 @@
-export interface Temp016GoochyEntry {
+export interface AppEntry {
 	id: string;
 	location: string;
 	name: string;

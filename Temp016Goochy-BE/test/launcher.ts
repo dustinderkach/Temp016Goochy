@@ -1,12 +1,11 @@
+//THIS IS A TEST FILE FOR THE APP HANDLER
 
-//THIS IS A TEST FILE FOR THE Temp016Goochy HANDLER
-
-import { handlerTemp016Goochy } from "../src/services/temp016Goochy/handlerTemp016Goochy";
+import { handlerApp } from "../src/services/temp016Goochy/handlerTemp016Goochy";
 
 process.env.AWS_REGION = "us-east-1";
 process.env.TABLE_NAME = "Temp016GoochyTable";
 
-handlerTemp016Goochy(
+handlerApp(
 	{
 		httpMethod: "PUT",
 		queryStringParameters: {

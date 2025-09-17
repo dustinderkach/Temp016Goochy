@@ -4,21 +4,35 @@ import {
 	APIGatewayProxyResult,
 	Context,
 } from "aws-lambda";
-import { postTemp016Goochy as postTemp016Goochy } from "./PostTemp016Goochy";
-import { getTemp016Goochy } from "./GetTemp016Goochy";
-import { updateTemp016Goochy } from "./UpdateTemp016Goochy";
-import { deleteTemp016Goochy } from "./DeleteTemp016Goochy";
+import { postAppEntry } from "./PostTemp016Goochy";
+import { getAppEntry } from "./GetTemp016Goochy";
+import { updateAppEntry } from "./UpdateTemp016Goochy";
+import { deleteAppEntry } from "./DeleteTemp016Goochy";
 import { JsonError, MissingFieldError } from "../shared/Validator";
 import { addCorsHeader } from "../shared/Utils";
 import { captureAWSv3Client, getSegment } from "aws-xray-sdk-core";
 import { getPresignedUrlAdminBucket } from "./getPresignedUrlAdminBucket";
+import { APP_NAME } from "../../config/appConfig";
+
+// Helper function to safely create subsegments
+function createSubsegment(name: string) {
+	try {
+		if (!process.env.JEST_WORKER_ID && getSegment) {
+			return getSegment().addNewSubsegment(name);
+		}
+	} catch (error) {
+		// X-Ray not available, return a mock subsegment
+		console.log(`X-Ray not available, skipping subsegment: ${name}`);
+	}
+	return { close: () => {} }; // Mock subsegment
+}
 
 //const ddbClient = captureAWSv3Client(new DynamoDBClient({}));
-const ddbClient = captureAWSv3Client
+const ddbClient = captureAWSv3Client && !process.env.JEST_WORKER_ID
 	? captureAWSv3Client(new DynamoDBClient({ region: process.env.AWS_REGION }))
 	: new DynamoDBClient({ region: process.env.AWS_REGION });
 
-async function handlerTemp016Goochy(
+async function handlerApp(
 	event: APIGatewayProxyEvent,
 	context: Context
 ): Promise<APIGatewayProxyResult> {
@@ -49,25 +63,21 @@ async function handlerTemp016Goochy(
 				};
 				break;
 			case "GET":
-				const subSegGET =
-					getSegment().addNewSubsegment("GET-Temp016Goochy");
-				const getResponse = await getTemp016Goochy(event, ddbClient);
+				const subSegGET = createSubsegment(`GET-${APP_NAME}`);
+				const getResponse = await getAppEntry(event, ddbClient);
 				subSegGET.close();
 				response = getResponse;
 				break;
 			case "POST":
 				if (event.path.includes("get-presigned-url")) {
-					const subSegPOST = getSegment().addNewSubsegment(
-						"POST-GetPresignedUrl"
-					);
+					const subSegPOST = createSubsegment("POST-GetPresignedUrl");
 					const presignedUrlResponse =
 						await getPresignedUrlAdminBucket(event);
 					subSegPOST.close();
 					response = presignedUrlResponse;
 				} else {
-					const subSegPOST =
-						getSegment().addNewSubsegment("POST-Temp016Goochy");
-					const postResponse = await postTemp016Goochy(
+					const subSegPOST = createSubsegment(`POST-${APP_NAME}`);
+					const postResponse = await postAppEntry(
 						event,
 						ddbClient
 					);
@@ -77,17 +87,14 @@ async function handlerTemp016Goochy(
 				break;
 
 			case "PUT":
-				const subSegPUT =
-					getSegment().addNewSubsegment("PUT-Temp016Goochy");
-				const putResponse = await updateTemp016Goochy(event, ddbClient);
+				const subSegPUT = createSubsegment(`PUT-${APP_NAME}`);
+				const putResponse = await updateAppEntry(event, ddbClient);
 				subSegPUT.close();
 				response = putResponse;
 				break;
 			case "DELETE":
-				const subSegDELETE = getSegment().addNewSubsegment(
-					"DELETE-Temp016Goochy"
-				);
-				const deleteResponse = await deleteTemp016Goochy(
+				const subSegDELETE = createSubsegment(`DELETE-${APP_NAME}`);
+				const deleteResponse = await deleteAppEntry(
 					event,
 					ddbClient
 				);
@@ -123,4 +130,4 @@ async function handlerTemp016Goochy(
 	return response;
 }
 
-export { handlerTemp016Goochy };
+export { handlerApp };

@@ -1,5 +1,9 @@
+// Set required environment variables before importing modules
+process.env.TABLE_NAME = "TestTable";
+process.env.AWS_REGION = "us-east-1";
+
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { handler } from "../../../src/services/temp016Goochy/handlerTemp016Goochy";
+import { handlerApp } from "../../../src/services/temp016Goochy/handlerTemp016Goochy";
 
 ///This may not be a good way to mock the DynamoDBClient, it maybe better to use the AWS SDK mock
 
@@ -29,9 +33,9 @@ const someItems = [
 	},
 ];
 
-describe("Temp016Goochy handler test suite", () => {
-	test("Returns temp016Goochy from dynamoDb", async () => {
-		const result = await handler(
+describe("App handler test suite", () => {
+	test("Returns app from dynamoDb", async () => {
+		const result = await handlerApp(
 			{
 				httpMethod: "GET",
 			} as any,
@@ -48,7 +52,7 @@ describe("Temp016Goochy handler test suite", () => {
 		const parsedResultBody = JSON.parse(result.body);
 		expect(parsedResultBody).toEqual(expectedResult);
 
-		expect(DynamoDBClient).toHaveBeenCalledTimes(1);
+		expect(DynamoDBClient).toHaveBeenCalledTimes(2); // One in handler, one in GetTemp016Goochy
 		expect(ScanCommand).toHaveBeenCalledTimes(1);
 	});
 

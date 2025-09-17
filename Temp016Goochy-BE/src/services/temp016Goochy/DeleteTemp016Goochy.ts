@@ -5,8 +5,9 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { hasAdminGroup } from "../shared/Utils";
+import { APP_NAME } from "../../config/appConfig";
 
-export async function deleteTemp016Goochy(
+export async function deleteAppEntry(
 	event: APIGatewayProxyEvent,
 	ddbClient: DynamoDBClient
 ): Promise<APIGatewayProxyResult> {
@@ -18,20 +19,20 @@ export async function deleteTemp016Goochy(
 	}
 
 	if (event.queryStringParameters && "id" in event.queryStringParameters) {
-		const temp016GoochyId = event.queryStringParameters["id"];
+		const entryId = event.queryStringParameters["id"];
 
 		await ddbClient.send(
 			new DeleteItemCommand({
 				TableName: process.env.TABLE_NAME,
 				Key: {
-					id: { S: temp016GoochyId },
+					id: { S: entryId },
 				},
 			})
 		);
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify(`Deleted temp016Goochy with id ${temp016GoochyId}`),
+			body: JSON.stringify(`Deleted ${APP_NAME} entry with id ${entryId}`),
 		};
 	}
 	return {

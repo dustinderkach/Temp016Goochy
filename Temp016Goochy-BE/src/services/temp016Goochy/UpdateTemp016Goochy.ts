@@ -3,20 +3,20 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 
 
-export async function updateTemp016Goochy(event: APIGatewayProxyEvent, ddbClient: DynamoDBClient): Promise<APIGatewayProxyResult> {
+export async function updateAppEntry(event: APIGatewayProxyEvent, ddbClient: DynamoDBClient): Promise<APIGatewayProxyResult> {
 
 
     if(event.queryStringParameters && ('id' in event.queryStringParameters) && event.body) {
 
         const parsedBody = JSON.parse(event.body);
-        const temp016GoochyId = event.queryStringParameters['id'];
+        const entryId = event.queryStringParameters['id'];
         const requestBodyKey = Object.keys(parsedBody)[0];
         const requestBodyValue = parsedBody[requestBodyKey];
 
         const updateResult = await ddbClient.send(new UpdateItemCommand({
             TableName: process.env.TABLE_NAME,
             Key: {
-                'id': {S: temp016GoochyId}
+                'id': {S: entryId}
             },
             UpdateExpression: 'set #zzzNew = :new',
             ExpressionAttributeValues: {

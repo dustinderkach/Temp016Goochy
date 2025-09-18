@@ -1,4 +1,4 @@
-import { AppEntry } from "../model/Model";
+import { Temp016GoochyEntry } from "../model/Model";
 
 export class MissingFieldError extends Error {
 	constructor(missingField: string) {
@@ -8,14 +8,14 @@ export class MissingFieldError extends Error {
 
 export class JsonError extends Error {}
 
-export function validateAsAppEntry(arg: any) {
-	if ((arg as AppEntry).location == undefined) {
+export function validateAsTemp016GoochyEntry(arg: any) {
+	if ((arg as Temp016GoochyEntry).location == undefined) {
 		throw new MissingFieldError("location");
 	}
-	if ((arg as AppEntry).name == undefined) {
+	if ((arg as Temp016GoochyEntry).name == undefined) {
 		throw new MissingFieldError("name");
 	}
-	if ((arg as AppEntry).id == undefined) {
+	if ((arg as Temp016GoochyEntry).id == undefined) {
 		throw new MissingFieldError("id");
 	}
 }

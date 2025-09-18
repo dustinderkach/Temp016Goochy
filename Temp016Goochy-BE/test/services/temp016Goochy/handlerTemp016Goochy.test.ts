@@ -1,7 +1,3 @@
-// Set required environment variables before importing modules
-process.env.TABLE_NAME = "TestTable";
-process.env.AWS_REGION = "us-east-1";
-
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { handlerApp } from "../../../src/services/temp016Goochy/handlerTemp016Goochy";
 
@@ -52,7 +48,7 @@ describe("App handler test suite", () => {
 		const parsedResultBody = JSON.parse(result.body);
 		expect(parsedResultBody).toEqual(expectedResult);
 
-		expect(DynamoDBClient).toHaveBeenCalledTimes(2); // One in handler, one in GetTemp016Goochy
+		expect(DynamoDBClient).toHaveBeenCalledTimes(1);
 		expect(ScanCommand).toHaveBeenCalledTimes(1);
 	});
 

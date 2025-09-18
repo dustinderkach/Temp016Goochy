@@ -1,5 +1,5 @@
 import { GetItemCommand } from "@aws-sdk/client-dynamodb";
-import { getAppEntry } from "../../../src/services/temp016Goochy/GetTemp016Goochy";
+import { getTemp016Goochy as getTemp016Goochy } from "../../../src/services/temp016Goochy/GetTemp016Goochy";
 
 const someItems = {
 	Items: [
@@ -25,7 +25,7 @@ const someItem = {
 	},
 };
 
-describe("GetAppEntry test suite", () => {
+describe("GetTemp016Goochy test suite", () => {
 	const ddbClientMock = {
 		send: jest.fn(),
 	};
@@ -34,9 +34,9 @@ describe("GetAppEntry test suite", () => {
 		jest.clearAllMocks();
 	});
 
-	test("should return app entries if no queryStringParameters", async () => {
+	test("should return temp016Goochy if no queryStringParameters", async () => {
 		ddbClientMock.send.mockResolvedValueOnce(someItems);
-		const getResult = await getAppEntry({} as any, ddbClientMock as any);
+		const getResult = await getTemp016Goochy({} as any, ddbClientMock as any);
 		const expectedResult = {
 			statusCode: 201,
 			body: JSON.stringify([
@@ -50,7 +50,7 @@ describe("GetAppEntry test suite", () => {
 	});
 
 	test("should return 400 if no id in queryStringParameters", async () => {
-		const getResult = await getAppEntry(
+		const getResult = await getTemp016Goochy(
 			{
 				queryStringParameters: {
 					notId: "123",
@@ -65,9 +65,9 @@ describe("GetAppEntry test suite", () => {
 		expect(getResult).toEqual(expectedResult);
 	});
 
-	test("should return 404 if id not found", async () => {
+	test("should return 404 if no id in queryStringParameters", async () => {
 		ddbClientMock.send.mockResolvedValueOnce({});
-		const getResult = await getAppEntry(
+		const getResult = await getTemp016Goochy(
 			{
 				queryStringParameters: {
 					id: "123",
@@ -77,14 +77,14 @@ describe("GetAppEntry test suite", () => {
 		);
 		const expectedResult = {
 			statusCode: 404,
-			body: JSON.stringify(`Temp016Goochy entry with id 123 not found!`),
+			body: JSON.stringify(`Temp016Goochy with id 123 not found!`),
 		};
 		expect(getResult).toEqual(expectedResult);
 	});
 
 	test("should return 200 if queryStringParameters with found id", async () => {
 		ddbClientMock.send.mockResolvedValueOnce(someItem);
-		const getResult = await getAppEntry(
+		const getResult = await getTemp016Goochy(
 			{
 				queryStringParameters: {
 					id: "123",

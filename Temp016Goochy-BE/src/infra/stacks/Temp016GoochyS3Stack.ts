@@ -3,26 +3,25 @@ import { Construct } from "constructs";
 import { getSuffixFromStack } from "../Utils";
 import { Bucket, HttpMethods, ObjectOwnership } from "aws-cdk-lib/aws-s3";
 import { AnyPrincipal, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { APP_NAME, APP_NAME_LOWER } from "../../config/appConfig";
 
-interface AppS3StackProps extends StackProps {
+interface Temp016GoochyS3StackProps extends StackProps {
 	envName: string;
 }
 
-export class AppS3Stack extends Stack {
+export class Temp016GoochyS3Stack extends Stack {
 	public readonly photosBucket: Bucket;
 
 	constructor(
 		scope: Construct,
 		id: string,
-		props?: AppS3StackProps
+		props?: Temp016GoochyS3StackProps
 	) {
 		super(scope, id, props);
 
 		const suffix = getSuffixFromStack(this);
 
-		this.photosBucket = new Bucket(this, `${APP_NAME}AdminPhotos`, {
-			bucketName: `${props.envName.toLowerCase()}-${APP_NAME_LOWER}-admin-photos-${suffix}`,
+		this.photosBucket = new Bucket(this, "Temp016GoochyAdminPhotos", {
+			bucketName: `${props.envName.toLowerCase()}-temp016goochy-admin-photos-${suffix}`,
 			cors: [
 				{
 					allowedMethods: [
@@ -56,7 +55,7 @@ export class AppS3Stack extends Stack {
 
 		new CfnOutput(this, "AdminPhotosBucketName", {
 			value: this.photosBucket.bucketName,
-			exportName: `${props?.envName}-${APP_NAME}AdminPhotosBucketName`,
+			exportName: `${props?.envName}-AdminPhotosBucketName`,
 		});
 	}
 }

@@ -3,9 +3,9 @@ import { AppApiStack } from "./stacks/Temp016GoochyApiStack";
 import { AppDataStack } from "./stacks/Temp016GoochyDataStack";
 import { AppLambdaStack } from "./stacks/Temp016GoochyLambdaStack";
 import { AppAuthStack } from "./stacks/Temp016GoochyAuthStack";
-import { AppUiDeploymentStack } from "./stacks/Temp016GoochyUiDeploymentStack";
+import { Temp016GoochyUiDeploymentStack } from "./stacks/Temp016GoochyUiDeploymentStack";
 import { Temp016GoochyMonitorStack } from "./stacks/Temp016GoochyMonitorStack";
-import { AppS3Stack } from "./stacks/Temp016GoochyS3Stack";
+import { Temp016GoochyS3Stack } from "./stacks/Temp016GoochyS3Stack";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import { APP_NAME } from "../config/appConfig";
 
@@ -31,13 +31,14 @@ console.log(
 // e.g., cdk bootstrap aws://094106269614/eu-central-1
 const allRegions = [env.primaryRegion, "eu-central-1"];
 
-	const s3Stack = new AppS3Stack(
-		app,
-		`${envName}-${APP_NAME}S3Stack`,
-		{
-			envName: envName,
-		}
-	);
+const s3Stack = new Temp016GoochyS3Stack(
+	app,
+	`${envName}-${APP_NAME}S3Stack`,
+	{
+		env: { account: env.account, region: env.primaryRegion },
+		envName: envName,
+	}
+);
 
 // Deploy Auth stack only in a single region (global authentication).
 const authStack = new AppAuthStack(
@@ -118,13 +119,14 @@ allRegions.forEach((region) => {
 	}
 });
 
-	const uiDeploymentStack = new AppUiDeploymentStack(
-		app,
-		`${envName}-${APP_NAME}UiDeploymentStack`,
-		{
-			envName: envName,
-		}
-	);
+const uiDeploymentStack = new Temp016GoochyUiDeploymentStack(
+	app,
+	`${envName}-${APP_NAME}UiDeploymentStack`,
+	{
+		env: { account: env.account, region: env.primaryRegion },
+		envName: envName,
+	}
+);
 
 //  For Deploy/Destroy purposes add dependency: UI Deployment stack depends on Auth stack
 uiDeploymentStack.addDependency(authStack);

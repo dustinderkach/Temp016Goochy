@@ -29,18 +29,14 @@ interface AppAuthStackProps extends StackProps {
 
 export class AppAuthStack extends Stack {
 	public userPool: UserPool;
-	private props: Temp016GoochyAuthStackProps;
+	private props: AppAuthStackProps;
 	private userPoolClient: UserPoolClient;
 	private identityPool: CfnIdentityPool;
 	private authenticatedRole: Role;
 	private unAuthenticatedRole: Role;
 	private adminRole: Role;
 
-	constructor(
-		scope: Construct,
-		id: string,
-		props: AppAuthStackProps
-	) {
+	constructor(scope: Construct, id: string, props: AppAuthStackProps) {
 		super(scope, id, props);
 		this.props = props;
 
@@ -63,10 +59,7 @@ export class AppAuthStack extends Stack {
 			value: props.envName,
 			description: "The environment name",
 		});
-
-		
 	}
-
 
 	private createUserPool() {
 		this.userPool = new UserPool(
@@ -110,15 +103,11 @@ export class AppAuthStack extends Stack {
 	}
 
 	private createAdminsGroup() {
-		new CfnUserPoolGroup(
-			this,
-			`${this.props.envName}-${APP_NAME}Admins`,
-			{
-				userPoolId: this.userPool.userPoolId,
-				groupName: "admins",
-				roleArn: this.adminRole.roleArn,
-			}
-		);
+		new CfnUserPoolGroup(this, `${this.props.envName}-${APP_NAME}Admins`, {
+			userPoolId: this.userPool.userPoolId,
+			groupName: "admins",
+			roleArn: this.adminRole.roleArn,
+		});
 	}
 
 	private createIdentityPool() {
@@ -135,14 +124,10 @@ export class AppAuthStack extends Stack {
 				],
 			}
 		);
-		new CfnOutput(
-			this,
-			`${this.props.envName}-${APP_NAME}IdentityPoolId`,
-			{
-				value: this.identityPool.ref,
-				exportName: `${this.props.envName}-${APP_NAME}IdentityPoolId`,
-			}
-		);
+		new CfnOutput(this, `${this.props.envName}-${APP_NAME}IdentityPoolId`, {
+			value: this.identityPool.ref,
+			exportName: `${this.props.envName}-${APP_NAME}IdentityPoolId`,
+		});
 	}
 
 	private createRoles(photosBucket: IBucket) {
@@ -247,6 +232,4 @@ export class AppAuthStack extends Stack {
 			}
 		);
 	}
-
-
 }

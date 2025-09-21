@@ -1,5 +1,5 @@
 import { GetItemCommand } from "@aws-sdk/client-dynamodb";
-import { getTemp016Goochy as getTemp016Goochy } from "../../../src/services/temp016Goochy/GetTemp016Goochy";
+import { getAppThing as getAppThing } from "../../../src/services/appThing/GetAppThing";
 
 const someItems = {
 	Items: [
@@ -36,7 +36,7 @@ describe("GetTemp016Goochy test suite", () => {
 
 	test("should return temp016Goochy if no queryStringParameters", async () => {
 		ddbClientMock.send.mockResolvedValueOnce(someItems);
-		const getResult = await getTemp016Goochy({} as any, ddbClientMock as any);
+		const getResult = await getAppThing({} as any, ddbClientMock as any);
 		const expectedResult = {
 			statusCode: 201,
 			body: JSON.stringify([
@@ -50,7 +50,7 @@ describe("GetTemp016Goochy test suite", () => {
 	});
 
 	test("should return 400 if no id in queryStringParameters", async () => {
-		const getResult = await getTemp016Goochy(
+		const getResult = await getAppThing(
 			{
 				queryStringParameters: {
 					notId: "123",
@@ -67,7 +67,7 @@ describe("GetTemp016Goochy test suite", () => {
 
 	test("should return 404 if no id in queryStringParameters", async () => {
 		ddbClientMock.send.mockResolvedValueOnce({});
-		const getResult = await getTemp016Goochy(
+		const getResult = await getAppThing(
 			{
 				queryStringParameters: {
 					id: "123",
@@ -84,7 +84,7 @@ describe("GetTemp016Goochy test suite", () => {
 
 	test("should return 200 if queryStringParameters with found id", async () => {
 		ddbClientMock.send.mockResolvedValueOnce(someItem);
-		const getResult = await getTemp016Goochy(
+		const getResult = await getAppThing(
 			{
 				queryStringParameters: {
 					id: "123",

@@ -1,12 +1,15 @@
 import genericImage from "../../assets/generic-photo.jpg";
-import { Temp016GoochyEntry } from "../model/model";
+import { AppThingEntry } from "../model/model";
 import "./Temp016GoochyComponent.css";
 
-interface Temp016GoochyComponentProps extends Temp016GoochyEntry {
-	reserveTemp016Goochy: (temp016GoochyId: string, temp016GoochyName: string) => void;
+interface AppThingComponentProps extends AppThingEntry {
+	reserveAppThing: (
+		appThingId: string,
+		appThingName: string
+	) => void;
 }
 
-export default function Temp016GoochyComponent(props: Temp016GoochyComponentProps) {
+export default function AppThingComponent(props: AppThingComponentProps) {
 	function renderImage() {
 		if (props.photoUrl) {
 			return <img src={props.photoUrl} />;
@@ -16,15 +19,13 @@ export default function Temp016GoochyComponent(props: Temp016GoochyComponentProp
 	}
 
 	return (
-		<div className="temp016GoochyComponent">
+		<div className="appThingComponent">
 			{renderImage()}
 			<label className="name">{props.name}</label>
 			<br />
 			<label className="location">{props.location}</label>
 			<br />
-			<button
-				onClick={() => props.reserveTemp016Goochy(props.id, props.name)}
-			>
+			<button onClick={() => props.reserveAppThing(props.id, props.name)}>
 				Reserve
 			</button>
 		</div>

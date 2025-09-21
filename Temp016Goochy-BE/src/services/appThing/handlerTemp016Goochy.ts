@@ -4,10 +4,10 @@ import {
 	APIGatewayProxyResult,
 	Context,
 } from "aws-lambda";
-import { postTemp016Goochy as postTemp016Goochy } from "./PostTemp016Goochy";
-import { getTemp016Goochy } from "./GetTemp016Goochy";
-import { updateTemp016Goochy } from "./UpdateTemp016Goochy";
-import { deleteTemp016Goochy } from "./DeleteTemp016Goochy";
+import { postAppThing } from "./PostAppThing";
+import { getAppThing } from "./GetAppThing";
+import { updateAppThing } from "./UpdateAppThing";
+import { deleteAppThing } from "./DeleteAppThing";
 import { JsonError, MissingFieldError } from "../shared/Validator";
 import { addCorsHeader } from "../shared/Utils";
 import { captureAWSv3Client, getSegment } from "aws-xray-sdk-core";
@@ -27,11 +27,11 @@ async function handlerApp(
 	console.log("Event path:", event.path);
 	console.log("HTTP Method:", event.httpMethod);
 	console.log("Received event:", {
-    httpMethod: event.httpMethod,
-    path: event.path,
-    headers: event.headers,
-    body: event.body ? event.body.substring(0, 100) : 'No body'  // Truncate for safety
-});
+		httpMethod: event.httpMethod,
+		path: event.path,
+		headers: event.headers,
+		body: event.body ? event.body.substring(0, 100) : "No body", // Truncate for safety
+	});
 	let response: APIGatewayProxyResult;
 
 	try {
@@ -50,9 +50,10 @@ async function handlerApp(
 				};
 				break;
 			case "GET":
-				const subSegGET =
-					getSegment().addNewSubsegment(`GET-${APP_NAME}`);
-				const getResponse = await getTemp016Goochy(event, ddbClient);
+				const subSegGET = getSegment().addNewSubsegment(
+					`GET-${APP_NAME}`
+				);
+				const getResponse = await getAppThing(event, ddbClient);
 				subSegGET.close();
 				response = getResponse;
 				break;
@@ -66,21 +67,20 @@ async function handlerApp(
 					subSegPOST.close();
 					response = presignedUrlResponse;
 				} else {
-					const subSegPOST =
-						getSegment().addNewSubsegment(`POST-${APP_NAME}`);
-					const postResponse = await postTemp016Goochy(
-						event,
-						ddbClient
+					const subSegPOST = getSegment().addNewSubsegment(
+						`POST-${APP_NAME}`
 					);
+					const postResponse = await postAppThing(event, ddbClient);
 					subSegPOST.close();
 					response = postResponse;
 				}
 				break;
 
 			case "PUT":
-				const subSegPUT =
-					getSegment().addNewSubsegment(`PUT-${APP_NAME}`);
-				const putResponse = await updateTemp016Goochy(event, ddbClient);
+				const subSegPUT = getSegment().addNewSubsegment(
+					`PUT-${APP_NAME}`
+				);
+				const putResponse = await updateAppThing(event, ddbClient);
 				subSegPUT.close();
 				response = putResponse;
 				break;
@@ -88,10 +88,7 @@ async function handlerApp(
 				const subSegDELETE = getSegment().addNewSubsegment(
 					`DELETE-${APP_NAME}`
 				);
-				const deleteResponse = await deleteTemp016Goochy(
-					event,
-					ddbClient
-				);
+				const deleteResponse = await deleteAppThing(event, ddbClient);
 				subSegDELETE.close();
 				response = deleteResponse;
 				break;

@@ -4,17 +4,17 @@ import { getSuffixFromStack } from "../Utils";
 import { Bucket, HttpMethods, ObjectOwnership } from "aws-cdk-lib/aws-s3";
 import { AnyPrincipal, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
-interface Temp016GoochyS3StackProps extends StackProps {
+interface AppS3StackProps extends StackProps {
 	envName: string;
 }
 
-export class Temp016GoochyS3Stack extends Stack {
+export class AppS3Stack extends Stack {
 	public readonly photosBucket: Bucket;
 
 	constructor(
 		scope: Construct,
 		id: string,
-		props?: Temp016GoochyS3StackProps
+		props?: AppS3StackProps
 	) {
 		super(scope, id, props);
 

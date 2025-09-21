@@ -2,7 +2,7 @@ import { SyntheticEvent, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { DataService } from "../../services/DataService";
 
-type CreateTemp016GoochyProps = {
+type CreateAppThingProps = {
 	dataService: DataService;
 };
 
@@ -10,7 +10,7 @@ type CustomEvent = {
 	target: HTMLInputElement;
 };
 
-export default function CreateTemp016Goochy({ dataService }: CreateTemp016GoochyProps) {
+export default function CreateAppThing({ dataService }: CreateAppThingProps) {
 	const [name, setName] = useState<string>("");
 	const [location, setLocation] = useState<string>("");
 	const [photo, setPhoto] = useState<File | undefined>();
@@ -19,12 +19,8 @@ export default function CreateTemp016Goochy({ dataService }: CreateTemp016Goochy
 	const handleSubmit = async (event: SyntheticEvent) => {
 		event.preventDefault();
 		if (name && location) {
-			const id = await dataService.createTemp016Goochy(
-				name,
-				location,
-				photo
-			);
-			setActionResult(`Created temp016Goochy with id ${id}`);
+			const id = await dataService.createAppThing(name, location, photo);
+			setActionResult(`Created this thing with id ${id}`);
 			setName("");
 			setLocation("");
 		} else {
@@ -70,7 +66,7 @@ export default function CreateTemp016Goochy({ dataService }: CreateTemp016Goochy
 				<br />
 				{renderPhoto()}
 				<br />
-				<input type="submit" value="Create temp016Goochy" />
+				<input type="submit" value="Create this thing" />
 			</form>
 		);
 	}

@@ -5,8 +5,8 @@ import { useState } from "react";
 import LoginComponent from "./components/LoginComponent";
 import { AuthService } from "./services/AuthService";
 import { DataService } from "./services/DataService";
-import CreateTemp016Goochy from "./components/temp016Goochy/CreateTemp016Goochy";
-import Temp016Goochy from "./components/temp016Goochy/Temp016Goochy";
+import CreateAppThing from "./components/appThing/CreateAppThing";
+import AppThing from "./components/appThing/AppThing";
 
 const authService = new AuthService();
 const dataService = new DataService(authService);
@@ -42,11 +42,11 @@ function App() {
 				},
 				{
 					path: "/createTemp016Goochy",
-					element: <CreateTemp016Goochy dataService={dataService} />,
+					element: <CreateAppThing dataService={dataService} />,
 				},
 				{
 					path: "/temp016Goochy",
-					element: <Temp016Goochy dataService={dataService} />,
+					element: <AppThing dataService={dataService} />,
 				},
 			],
 		},

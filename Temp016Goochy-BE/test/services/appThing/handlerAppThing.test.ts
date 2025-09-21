@@ -1,5 +1,5 @@
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { handlerApp } from "../../../src/services/temp016Goochy/handlerTemp016Goochy";
+import { handlerApp } from "../../../src/services/appThing/handlerTemp016Goochy";
 
 ///This may not be a good way to mock the DynamoDBClient, it maybe better to use the AWS SDK mock
 

@@ -1,6 +1,6 @@
 //THIS IS A TEST FILE FOR THE APP HANDLER
 
-import { handlerApp } from "../src/services/temp016Goochy/handlerTemp016Goochy";
+import { handlerApp } from "../src/services/appThing/handlerTemp016Goochy";
 
 process.env.AWS_REGION = "us-east-1";
 process.env.TABLE_NAME = "Temp016GoochyTable";

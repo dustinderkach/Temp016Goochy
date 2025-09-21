@@ -25,7 +25,7 @@ export class AppLambdaStack extends Stack {
 	) {
 		super(scope, id, props);
 		//Note, AWS_REGION is avaiable in the Lambda runtime environment, so no need to pass it as an environment variable  Otherwise it will fail
-		const temp016GoochyLambda = new NodejsFunction(
+		const lambdaJsFunction = new NodejsFunction(
 			this,
 			`${props.envName}-${APP_NAME}Lambda`,
 			{
@@ -55,7 +55,7 @@ export class AppLambdaStack extends Stack {
 			}
 		);
 
-		temp016GoochyLambda.addToRolePolicy(
+		lambdaJsFunction.addToRolePolicy(
 			new PolicyStatement({
 				effect: Effect.ALLOW,
 				resources: [props.tableArn],
@@ -70,7 +70,7 @@ export class AppLambdaStack extends Stack {
 		);
 
 		// Add permissions for S3
-		temp016GoochyLambda.addToRolePolicy(
+		lambdaJsFunction.addToRolePolicy(
 			new PolicyStatement({
 				effect: Effect.ALLOW,
 				actions: ["s3:PutObject", "s3:GetObject"],
@@ -79,7 +79,7 @@ export class AppLambdaStack extends Stack {
 		);
 
 		this.appLambdaIntegration = new LambdaIntegration(
-			temp016GoochyLambda
+			lambdaJsFunction
 		);
 
 		console.log("lambdastack BUCKET_ARN:", props.bucketArn);

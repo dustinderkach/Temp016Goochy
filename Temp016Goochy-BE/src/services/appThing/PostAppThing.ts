@@ -4,20 +4,18 @@ import {
 	PutItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { validateAsTemp016GoochyEntry } from "../shared/Validator";
+import { validateAsAppThingEntry } from "../shared/Validator";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { createRandomId, parseJSON } from "../shared/Utils";
 
-
-export async function postTemp016Goochy(
+export async function postAppThing(
 	event: APIGatewayProxyEvent,
 	ddbClient: DynamoDBClient
 ): Promise<APIGatewayProxyResult> {
 	const randomId = createRandomId();
 	const item = parseJSON(event.body);
 	item.id = randomId;
-	validateAsTemp016GoochyEntry(item);
-
+	validateAsAppThingEntry(item);
 
 	const result = await ddbClient.send(
 		new PutItemCommand({

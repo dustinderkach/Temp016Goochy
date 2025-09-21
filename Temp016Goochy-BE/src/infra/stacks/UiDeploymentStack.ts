@@ -7,23 +7,20 @@ import { existsSync } from "fs";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { AccessLevel, Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3BucketOrigin, S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { APP_NAME, APP_NAME_LOWER } from "../../config/appConfig";
 
-interface Temp016GoochyS3StackProps extends StackProps {
+interface AppS3StackProps extends StackProps {
 	envName: string;
 }
 
-export class Temp016GoochyUiDeploymentStack extends Stack {
-	constructor(
-		scope: Construct,
-		id: string,
-		props?: Temp016GoochyS3StackProps
-	) {
+export class AppUIDeploymentStack extends Stack {
+	constructor(scope: Construct, id: string, props?: AppS3StackProps) {
 		super(scope, id, props);
 
 		const suffix = getSuffixFromStack(this);
 
 		const deploymentBucket = new Bucket(this, "uiDeploymentBucket", {
-			bucketName: `${props.envName.toLowerCase()}-temp016goochy-fe-${suffix}`,
+			bucketName: `${props.envName.toLowerCase()}-${APP_NAME_LOWER}-fe-${suffix}`,
 		});
 
 		const uiDir = join(
@@ -32,7 +29,7 @@ export class Temp016GoochyUiDeploymentStack extends Stack {
 			"..",
 			"..",
 			"..",
-			"Temp016Goochy-FE",
+			`${APP_NAME}-FE`,
 			"dist"
 		);
 		if (!existsSync(uiDir)) {
@@ -42,7 +39,7 @@ export class Temp016GoochyUiDeploymentStack extends Stack {
 
 		new BucketDeployment(
 			this,
-			`${props.envName.toLowerCase()}Temp016GoochyDeployment`,
+			`${props.envName.toLowerCase()}${APP_NAME}Deployment`,
 			{
 				destinationBucket: deploymentBucket,
 				sources: [Source.asset(uiDir)],
@@ -58,7 +55,7 @@ export class Temp016GoochyUiDeploymentStack extends Stack {
 
 		const distribution = new Distribution(
 			this,
-			`${props.envName.toLowerCase()}Temp016GoochyDistribution`,
+			`${props.envName.toLowerCase()}${APP_NAME}Distribution`,
 			{
 				defaultRootObject: "index.html",
 				defaultBehavior: {
@@ -69,14 +66,10 @@ export class Temp016GoochyUiDeploymentStack extends Stack {
 
 		new CfnOutput(
 			this,
-			`${props.envName.toLowerCase()}Temp016GoochyDistributionDomainName`,
+			`${props.envName.toLowerCase()}${APP_NAME}DistributionDomainName`,
 			{
 				value: distribution.distributionDomainName,
 			}
 		);
-
-
 	}
-
-
 }

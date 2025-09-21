@@ -1,9 +1,10 @@
 import { execSync } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
+import { APP_NAME } from "./src/config/appConfig"; 
 
 // Paths
-const frontendPath = path.resolve(__dirname, "../Temp016Goochy-FE");
+const frontendPath = path.resolve(__dirname, `../${APP_NAME}-FE`);
 const logFilePath = path.resolve(__dirname, "deploy.log");
 
 // Helper function to log messages to both console and a log file

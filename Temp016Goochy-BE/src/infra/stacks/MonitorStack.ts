@@ -8,7 +8,7 @@ import { LambdaSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 import { Construct } from "constructs";
 import { join } from "path";
 
-export class Temp016GoochyMonitorStack extends Stack {
+export class AppMonitorStack extends Stack {
 	constructor(scope: Construct, id: string, props?: StackProps) {
 		super(scope, id, props);
 

@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 
 
 
-export async function postTemp016GoochyWithDoc(event: APIGatewayProxyEvent, ddbClient: DynamoDBClient): Promise<APIGatewayProxyResult> {
+export async function postAppThingWithDoc(event: APIGatewayProxyEvent, ddbClient: DynamoDBClient): Promise<APIGatewayProxyResult> {
 
 
     const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);

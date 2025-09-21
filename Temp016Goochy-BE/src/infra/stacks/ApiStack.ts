@@ -27,11 +27,7 @@ interface AppApiStackProps extends StackProps {
 }
 
 export class AppApiStack extends Stack {
-	constructor(
-		scope: Construct,
-		id: string,
-		props: AppApiStackProps
-	) {
+	constructor(scope: Construct, id: string, props: AppApiStackProps) {
 		super(scope, id, props);
 
 		const api = new RestApi(this, `${props.envName}-${APP_NAME}Api`, {
@@ -141,30 +137,30 @@ export class AppApiStack extends Stack {
 		);
 
 		// Main resource
-		const temp016GoochyResource = api.root.addResource(
+		const appResource = api.root.addResource(
 			`${props.envName}-${APP_NAME_LOWER}`
 		);
-		temp016GoochyResource.addMethod(
+		appResource.addMethod(
 			"GET",
 			props.appLambdaIntegration,
 			optionsWithAuth
 		);
-		temp016GoochyResource.addMethod(
+		appResource.addMethod(
 			"POST",
 			props.appLambdaIntegration,
 			optionsWithAuth
 		);
-		temp016GoochyResource.addMethod(
+		appResource.addMethod(
 			"PUT",
 			props.appLambdaIntegration,
 			optionsWithAuth
 		);
-		temp016GoochyResource.addMethod(
+		appResource.addMethod(
 			"DELETE",
 			props.appLambdaIntegration,
 			optionsWithAuth
 		);
-		temp016GoochyResource.addMethod(
+		appResource.addMethod(
 			"OPTIONS",
 			new MockIntegration({
 				integrationResponses: [

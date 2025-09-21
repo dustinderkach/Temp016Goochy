@@ -1,6 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { AuthService } from "./AuthService";
-import { Temp016GoochyEntry } from "../components/model/model";
+import { AppThingEntry } from "../components/model/model";
 import { ImageProcessingService } from "./ImageProcessingService";
 import outputs from "../config/outputsForFE.json";
 export class DataService {
@@ -45,32 +45,28 @@ export class DataService {
 		}
 	}
 
-	public reserveTemp016Goochy(temp016GoochyId: string) {
+	public reserveAppThing(appThingId: string) {
 		return "123";
 	}
 
-	public async getTemp016Goochy(): Promise<Temp016GoochyEntry[]> {
+	public async getAppThing(): Promise<AppThingEntry[]> {
 		if (!this.apiEndpointAppNameUrl) {
 			throw new Error("API endpoint is not defined");
 		}
-		const getTemp016GoochyResult = await fetch(this.apiEndpointAppNameUrl, {
+		const getAppThingResult = await fetch(this.apiEndpointAppNameUrl, {
 			method: "GET",
 			headers: {
 				Authorization: this.authService.jwtToken!,
 			},
 		});
-		const getTemp016GoochyResultJson = await getTemp016GoochyResult.json();
-		return getTemp016GoochyResultJson;
+		const getAppThingResultJson = await getAppThingResult.json();
+		return getAppThingResultJson;
 	}
 
-	public async createTemp016Goochy(
-		name: string,
-		location: string,
-		photo?: File
-	) {
-		const temp016Goochy = {} as any;
-		temp016Goochy.name = name;
-		temp016Goochy.location = location;
+	public async createAppThing(name: string, location: string, photo?: File) {
+		const appThing = {} as any;
+		appThing.name = name;
+		appThing.location = location;
 
 		if (photo) {
 			// Process image client-side first
@@ -91,18 +87,18 @@ export class DataService {
 				const viewingUrl = await this.uploadPublicFile(
 					processedImages.viewing
 				);
-				temp016Goochy.viewingPhotoUrl = viewingUrl;
-				temp016Goochy.originalPhotoUrl = originalUrl;
+				appThing.viewingPhotoUrl = viewingUrl;
+				appThing.originalPhotoUrl = originalUrl;
 			} else {
 				// Use same URL for both
-				temp016Goochy.viewingPhotoUrl = originalUrl;
-				temp016Goochy.originalPhotoUrl = originalUrl;
+				appThing.viewingPhotoUrl = originalUrl;
+				appThing.originalPhotoUrl = originalUrl;
 			}
-			temp016Goochy.photoUrl = temp016Goochy.viewingPhotoUrl;
+			appThing.photoUrl = appThing.viewingPhotoUrl;
 		}
 		const postResult = await fetch(this.apiEndpointAppNameUrl, {
 			method: "POST",
-			body: JSON.stringify(temp016Goochy),
+			body: JSON.stringify(appThing),
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: this.authService.jwtToken!,
@@ -111,7 +107,7 @@ export class DataService {
 
 		if (!postResult.ok) {
 			throw new Error(
-				`Failed to create Temp016Goochy: ${postResult.statusText}`
+				`Failed to create this thing: ${postResult.statusText}`
 			);
 		}
 		const postResultJSON = await postResult.json();
